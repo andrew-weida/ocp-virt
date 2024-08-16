@@ -1,6 +1,12 @@
 ---
+
+- name: Add host to group 'just_created'
+  ansible.builtin.add_host:
+    name: '{{ vm_namespace}}-{{ vm_name }}'
+    groups: target_vm
+
 - name: Install LAMP Stack on RHEL 9
-  hosts: all
+  hosts: target_vm
   become: true
 
   tasks:
