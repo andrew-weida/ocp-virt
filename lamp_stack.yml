@@ -55,6 +55,9 @@
         name: httpd
         state: restarted
 
+- name: Create Service and Route to expose web server externally
+  hosts: localhost
+  tasks:
     - name: Expose http port with ClusterIP
       kubernetes.core.k8s_service:
         state: present
