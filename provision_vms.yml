@@ -90,7 +90,7 @@
                       userData: |
                         #cloud-config
                         users:
-                          - name: centos
+                          - name: "{{ vm_user }}"
                             sudo: ['ALL=(ALL) NOPASSWD: ALL']
                             groups: wheel
                             shell: /bin/bash
@@ -100,7 +100,7 @@
                             lock_passwd: false
                         chpasswd:
                           list: |
-                            cloud-user:{{ vm_password }}
+                            {{ vm_user }}:{{ vm_password }}
                           expire: False
                     name: cloudinitdisk
       loop:
