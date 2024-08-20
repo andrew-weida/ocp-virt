@@ -10,6 +10,7 @@
 
 - name: Install LAMP Stack on RHEL 9
   hosts: target_vm
+  remote_user: "{{ vm_user }}"
   become: true
 
   tasks:
