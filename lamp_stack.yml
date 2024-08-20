@@ -52,3 +52,21 @@
       ansible.builtin.systemd:
         name: httpd
         state: restarted
+
+    - name: Expose http port with ClusterIP
+      kubernetes.core.k8s_service:
+        state: present
+        name: "{{ target_vm }}-http"
+        namespace: default
+        ports:
+        - port: 80
+          protocol: TCP
+        selector:
+          kubevirt.io/domain: {{ target_vm }}
+
+    - name: Expose the insecure service externally with a route
+      redhat.openshift.openshift_route:
+        service: "{{ target_vm }}-http"
+        namespace: "{{ vm_namespace}}"
+        termination: edge
+        insecure_policy: redirect
