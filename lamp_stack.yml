@@ -12,6 +12,8 @@
   hosts: target_vm
   remote_user: "{{ vm_user }}"
   become: true
+  vars: 
+    vm_name: "{{ vm_namespace}}-{{ vm_name }}"
 
   tasks:
     - name: Install Apache
@@ -62,11 +64,11 @@
         - port: 80
           protocol: TCP
         selector:
-          kubevirt.io/domain: "{{ target_vm }}"
+          kubevirt.io/domain: "{{ vm_name }}"
 
     - name: Expose the insecure service externally with a route
       redhat.openshift.openshift_route:
-        service: "{{ target_vm }}-http"
+        service: "{{ vm_name }}-http"
         namespace: "{{ vm_namespace}}"
         termination: edge
         insecure_policy: redirect
