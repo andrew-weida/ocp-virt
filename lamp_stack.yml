@@ -58,7 +58,7 @@
     - name: Expose http port with ClusterIP
       kubernetes.core.k8s_service:
         state: present
-        name: "{{ target_vm }}-http"
+        name: "{{ vm_name }}-http"
         namespace: default
         ports:
         - port: 80
