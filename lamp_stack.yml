@@ -62,7 +62,7 @@
         - port: 80
           protocol: TCP
         selector:
-          kubevirt.io/domain: {{ target_vm }}
+          kubevirt.io/domain: "{{ target_vm }}"
 
     - name: Expose the insecure service externally with a route
       redhat.openshift.openshift_route:
