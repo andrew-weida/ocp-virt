@@ -74,4 +74,5 @@
         service: "{{ vm_name }}-http"
         namespace: "{{ vm_namespace}}"
         termination: edge
-        insecure_policy: redirect
+        tls:
+          insecure_policy: redirect
