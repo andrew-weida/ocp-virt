@@ -62,7 +62,7 @@
       kubernetes.core.k8s_service:
         state: present
         name: "{{ vm_name }}-http"
-        namespace: default
+        namespace: "{{ vm_namespace }}"
         ports:
         - port: 80
           protocol: TCP
@@ -72,7 +72,7 @@
     - name: Expose the insecure service externally with a route
       redhat.openshift.openshift_route:
         service: "{{ vm_name }}-http"
-        namespace: "{{ vm_namespace}}"
+        namespace: "{{ vm_namespace }}"
         termination: edge
         tls:
           insecure_policy: redirect
