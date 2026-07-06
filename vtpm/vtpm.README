@@ -5,3 +5,15 @@ Inside the virt-launcher pod, libvirt will use swtpm_setup to generate tpm state
 Potential Fortanix DSM: 
 With Fortanix DSM integration, swtpm process does not generate and use its own keys, the DSM acts as a KMS and the swtpm_setup talks directly to the DSM to create the keys where they are stored, tpm state would only store a reference to the keys in DSM (pkcs#11 key handles?). If the guest OS requires the use of the keys for signing an attestation quote the swtpm process would need to act like a middleman to send the request to the DSM.
 
+NetApp Integration with Fortanix
+https://support.fortanix.com/docs/fortanix-dsm-with-netapp-ontap
+
+Storage Provisioning: A Persistent Volume Claim (PVC) is created for the vTPM state, backed by a NetApp ONTAP StorageClass. The NetApp array provisions the volume.
+
+KMIP Integration (Key Retrieval): When the volume is created, NetApp ONTAP reaches out to Fortanix DSM via the Key Management Interoperability Protocol (KMIP). Fortanix acts as an external key manager, and NetApp requests a volume encryption key for that specific PVC.
+
+NetApp Volume Encryption (NVE): NetApp uses the key received from Fortanix to encrypt the entire volume at the hardware level. This ensures that the data is encrypted "at rest" on the physical disks within the NetApp array.
+
+Pod Interaction (Decryption): The PVC is mounted into the Kubernetes worker node and attached to the virt-launcher pod. Because the decryption happens on the NetApp array (the storage controller), the volume is presented to the virt-launcher pod as a normal, unencrypted file system.
+
+Plaintext Key Exposure (The Security Caveat): When the swtpm process in the virt-launcher pod initially boots, it has no PKCS#11 plugin. Therefore, it generates the Endorsement Key (EK) and Attestation Identity Key (AIK) root keys locally in memory. The private portions of these keys are then written to the mounted PVC. This means the vTPM's root keys exist in plaintext within the memory and filesystem boundary of the pod, even though the underlying storage array is encrypted.
