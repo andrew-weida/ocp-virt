@@ -1,0 +1,7 @@
+Do we know what they are actually working on? I’m afraid it may just be running the DSM or their accelerator within a VM, which is not what my customer is looking for, and assuming most other customers when asking for Fortanix DSM integration in the context of Openshift Virtualization.
+Native vTPM: 
+Inside the virt-launcher pod, libvirt will use swtpm_setup to generate tpm state and cryptographic artifacts (vTPM Endorsement Key and Attestation Identity Key) and launch a swtpm process which communicates with QEMU via a unix socket. Here tpm state (and private keys) are stored in emptyDir or PVC if persistent vTPM is enabled.
+
+Potential Fortanix DSM: 
+With Fortanix DSM integration, swtpm process does not generate and use its own keys, the DSM acts as a KMS and the swtpm_setup talks directly to the DSM to create the keys where they are stored, tpm state would only store a reference to the keys in DSM (pkcs#11 key handles?). If the guest OS requires the use of the keys for signing an attestation quote the swtpm process would need to act like a middleman to send the request to the DSM.
+
